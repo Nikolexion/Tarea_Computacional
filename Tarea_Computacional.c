@@ -1,6 +1,15 @@
 #include <stdio.h>
 #include <string.h>
 
+#define NUM_VERTICES 112
+#define MAX_CALLE_LEN 50
+#define FILENAME "nombresIntersecciones.txt"
+
+// Definición de la matriz de adyacencia
+int matrizAdyacencia[NUM_VERTICES][NUM_VERTICES];
+
+// Estructura para almacenar la correspondencia entre vértices y calles
+
 
 int main() {
     char inputString[] = "Orompello 314 Chacabuco 201";
@@ -23,10 +32,10 @@ int main() {
     //int numeroPalabra2 = obtenerCalleX(input2);
     if (numeroPalabra != -1)
     {
-        printf("La palabra '%s' es horizontal y su nro es '%d'", palabra1,numeroPalabra);
+        printf("La calle '%s' es horizontal y su nro es '%d'", palabra1,numeroPalabra);
     } else {
-        numeroPalabra = obtenerCalleY(input);
-        printf("La palabra '%s' es vertical y su nro es '%d'", palabra1,numeroPalabra);
+        numeroPalabra = obtenerCalleY(palabra1);
+        printf("La calle '%s' es vertical y su nro es '%d'", palabra1,numeroPalabra);
 
     }
     
@@ -99,3 +108,42 @@ int obtenerCalleY(const char* palabra) {
     // Si no se encuentra la palabra, devolver -1 o algún valor que indique que no se encontró
     return -1;
 }
+
+
+typedef struct {
+    int vertice;
+    char calle[MAX_CALLE_LEN];
+} Correspondencia;
+
+Correspondencia mapaCalles[NUM_VERTICES];
+
+// Función para convertir un vértice a una calle
+char* obtenerCalle(int vertice) {
+    leerVerticesDesdeArchivo(FILENAME);
+    // Busca el vértice en el mapa
+    for (int i = 0; i < NUM_VERTICES; i++) {
+        if (mapaCalles[i].vertice == vertice) {
+            return mapaCalles[i].calle;
+        }
+    }
+
+    // Si el vértice no está en el mapa, devuelve una cadena vacía
+    return "";
+}
+
+// Función para leer los vértices desde un archivo
+void leerVerticesDesdeArchivo(const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        perror("Error al abrir el archivo");
+        return;
+    }
+
+    // Lee cada vértice y asigna nombres de calles
+    for (int i = 0; i < NUM_VERTICES; i++) {
+        fscanf(file, "%d %s", &mapaCalles[i].vertice, mapaCalles[i].calle);
+    }
+
+    fclose(file);
+}
+
