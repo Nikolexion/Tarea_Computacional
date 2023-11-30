@@ -3,7 +3,7 @@
 
 #define NUM_VERTICES 112
 #define MAX_CALLE_LEN 50
-#define FILENAME "nombreIntersecciones.txt"
+#define FILENAME "C:/Users/Lenovo/Desktop/a/U/C/Clases/Clases profe vicente/Discretas/Tarea_Computacional/nombreIntersecciones.txt"
 
 // Definición de la matriz de adyacencia
 int matrizAdyacencia[NUM_VERTICES][NUM_VERTICES];
@@ -39,9 +39,9 @@ int main() {
     //char* numeroPalabra = obtenerCalleX(calle1);
     //char* numeroPalabra2 = obtenerCalleX(input2);
     leerVerticesDesdeArchivo(FILENAME);
-    for (int i = 0; i < 6; i++)
+    for (int i = 0; i < sizeof(mapaCalles->calle); i++)
     {
-        printf("%s", mapaCalles[i].calle);
+        printf("%s %d ", mapaCalles[i].calle, mapaCalles[i].vertice);
     }
     
 //    if (numeroPalabra != -1)
