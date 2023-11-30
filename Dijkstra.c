@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 void dijkstra(int matrizAdyacencia[112][112], int inicio, int final) {
     int distancias[112], anteriores[112], visto[112], camino[112], actual = inicio;
 

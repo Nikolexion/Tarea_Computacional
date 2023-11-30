@@ -1,12 +1,19 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+
+#include "lecturaArchivo.h"
+#include "Dijkstra.h"
 
 #define NUM_VERTICES 112
 #define MAX_CALLE_LEN 50
-#define FILENAME "C:/Users/Lenovo/Desktop/a/U/C/Clases/Clases profe vicente/Discretas/Tarea_Computacional/nombreIntersecciones.txt"
+#define FILENAME "C:/Users/rica1/OneDrive/Escritorio/TareaDiscretas/Tarea_Computacional/nombreIntersecciones.txt"
+
+void leerVerticesDesdeArchivo(const char *filename);
+char* nombreVertice(int vertice);
 
 // Definición de la matriz de adyacencia
-int matrizAdyacencia[NUM_VERTICES][NUM_VERTICES];
+int** matrizAdyacencia;
 
 typedef struct {
     int vertice;
@@ -19,58 +26,18 @@ Nodo mapaCalles[NUM_VERTICES];
 
 
 int main() {
-    char inputString[] = "Orompello 314 Chacabuco 201";
-
-    // Variables para almacenar las palabras separadas
-    char calle1[50], numero1[50], calle2[50], numero2[50];
-
-    // Llamar a la función para separar las palabras
-    //separarPalabras(inputString, calle1, numero1, calle2, numero2);
-
-    // Mostrar las palabras por separado
-    //printf("Palabra 1: %s\n", calle1);
-    //printf("Palabra 2: %s\n", numero1);
-    //printf("Palabra 3: %s\n", calle1);
-    //printf("Palabra 4: %s\n", numero2);
-
-    //const char* input = "Rengo";
-    //const char* input2 = "Los_Carrera";
-
-    //char* numeroPalabra = obtenerCalleX(calle1);
-    //char* numeroPalabra2 = obtenerCalleX(input2);
     leerVerticesDesdeArchivo(FILENAME);
-    for (int i = 0; i < sizeof(mapaCalles->calle); i++)
-    {
-        printf("%s %d ", mapaCalles[i].calle, mapaCalles[i].vertice);
-    }
     
-//    if (numeroPalabra != -1)
-//    {
-//        printf("La calle '%s' es horizontal y su nro es '%d'", calle1,numeroPalabra);
-//    } else {
-//        numeroPalabra = obtenerCalleY(calle1);
-//        printf("La calle '%s' es vertical y su nro es '%d'", calle1,numeroPalabra);
-//
-//    }
-    
+    int matrizAdyacencia[112][112];
+    //matrizAdyacencia = (int**)malloc(NUM_VERTICES * sizeof(int*));
+    //for(int i=0;i<NUM_VERTICES;i++){
+    //    matrizAdyacencia[i]=(int*)malloc(NUM_VERTICES * sizeof(int));
+    //}
+    generarMatriz(matrizAdyacencia);
 
-    /*if (numeroPalabra != -1) {
-        printf("La palabra '%s' tiene el número: %d\n", input, numeroPalabra);
-        printf("La palabra '%s' tiene el número: %d\n", input2, numeroPalabra2);
-    } else {
-        printf("La palabra '%s' no fue encontrada.\n", input);
-    }*/
-
+    dijkstra(matrizAdyacencia,1,28);
     return 0;
 }
-
-
-
-
-
-
-
-
 
 
 // Función para convertir un vértice a una calle
@@ -102,4 +69,85 @@ void leerVerticesDesdeArchivo(const char *filename) {
 
     fclose(file);
 }
+void generarMatriz(int matriz[112][112]){
+    FILE *archivo;
+    int numNodos = 112;
 
+    archivo = fopen("/Users/rica1/OneDrive/Escritorio/TareaDiscretas/Tarea_Computacional/MatrizAdyacencia.txt","r");
+
+    if(archivo == NULL){
+        perror("Error al abrir el archivo");
+        return;
+    }
+
+    for(int i=0; i<numNodos; i++){
+        for(int j=0; j<numNodos; j++){
+            fscanf(archivo, "%d", &matriz[i][j]);
+        }
+    }
+    fclose(archivo);
+
+    for(int i=0; i<numNodos; i++){
+        for(int j=0; j<numNodos; j++){
+            printf("%d", matriz[i][j]);
+        }
+        printf("\n");
+    }
+}
+void dijkstra(int matrizAdyacencia[112][112], int inicio, int final) {
+    int distancias[112], anteriores[112], visto[112], camino[112], actual = inicio;
+
+    for (int i = 0; i < 112; i++) {
+        distancias[i] = 9999;           //Dejamos las distancias en un numero alto al inicio, ya que no tenemos un "infinito" 
+        anteriores[i] = -1;             //Dejamos el vector de anteriores en -1 para mostrar que se aun no empieza 
+        visto[i] = 0;               //Dejamos el vector en 0 ya que ningun vertice ha sido visitado
+    }
+
+    visto[actual] = 1;
+    distancias[actual] = 0;
+
+    while (!visto[final]) {
+        int distanciaMinima = 9999;
+        int vertice = 0;
+
+        for (int i = 0; i < 112; i++) {
+            int distancia = distancias[actual] + matrizAdyacencia[actual][i];
+            if (distancia < distancias[i] && !visto[i]) {
+                distancias[i] = distancia;
+                anteriores[i] = actual;
+            }
+            if (distanciaMinima > distancias[i] && !visto[i]) {
+                distanciaMinima = distancias[i];
+                vertice = i;
+            }
+        }
+      actual = vertice;
+        visto[actual] = 1;
+    }
+
+    actual = final;
+
+    int longitudCamino = 0;
+    while (actual != inicio) {
+        camino[longitudCamino++] = actual;
+        actual = anteriores[actual];
+    }
+    camino[longitudCamino++] = actual;
+
+    for (int i = 0; i < longitudCamino / 2; i++) {
+        int aux = camino[i];
+        camino[i] = camino[longitudCamino - i - 1];
+        camino[longitudCamino - i - 1] = aux;
+    }
+
+    printf("Camino desde %d hasta %d: ", inicio, final);
+    for (int i = 0; i < longitudCamino; i++) {
+        if (i == longitudCamino - 1) {
+            printf("%d\n", camino[i]);
+        } else {
+            printf("%d ", camino[i]);
+        }
+    }
+
+    printf("Distancia desde %d hasta %d: %d\n", inicio, final, distancias[final]);
+}
