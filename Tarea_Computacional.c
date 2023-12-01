@@ -12,6 +12,7 @@
 
 void leerVerticesDesdeArchivo(const char *filename);
 char* nombreVertice(int vertice);
+int obtenerCalle(const char* palabra, int *vertical);
 
 
 typedef struct {
@@ -79,6 +80,65 @@ int obtenerCalleX(const char* palabra) {
 
     // Si no se encuentra la palabra, devolver -1 o algún valor que indique que no se encontró
     return -1;
+}
+int numeroACalle(const char* nroCalle, int vertical){
+    int calle = atoi(nroCalle);
+    if (vertical = 1)
+    {
+        if (calle < 100){
+            return 0;
+    } else if (calle < 200){
+        return 1;
+    } else if (calle < 300){
+        return 2;
+    } else if (calle < 400){
+        return 3;
+    } else if (calle < 500){
+        return 4;
+    } else if (calle < 600){
+        return 5;
+    } else if (calle < 700){
+        return 6;
+    } else if (calle < 800){
+        return 7;
+    } else if (calle < 900){
+        return 8;
+    } else if (calle < 1000){
+        return 9;
+    } else if (calle < 1100){
+        return 10;
+    } else if (calle < 1200){
+        return 11;
+    } else if (calle < 1300){
+        return 12;
+    } else if (calle < 1400){
+        return 13;
+    } else {
+        return -1;
+    }
+    } else if (vertical = 0) {
+        if (calle < 100){
+            return 7;
+    } else if (calle < 200){
+        return 6;
+    } else if (calle < 300){
+        return 5;
+    } else if (calle < 400){
+        return 4;
+    } else if (calle < 500){
+        return 3;
+    } else if (calle < 600){
+        return 2;
+    } else if (calle < 700){
+        return 1;
+    } else if (calle < 800){
+        return 0;
+    } else {
+        return -1;
+    }
+    } else {
+        return -1;
+    }
 }
 
 int obtenerCalleY(const char* palabra) {
