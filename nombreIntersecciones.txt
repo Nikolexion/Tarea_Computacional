@@ -25,3 +25,4 @@
 25 Tucapel_Maipu
 26 Ormpello_Maipu
 27 Ongolmo_Maipu
+28 Arturo_Prat_Freire
