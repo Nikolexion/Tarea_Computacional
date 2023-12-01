@@ -7,7 +7,8 @@
 
 #define NUM_VERTICES 112
 #define MAX_CALLE_LEN 50
-#define FILENAME "C:/Users/rica1/OneDrive/Escritorio/TareaDiscretas/Tarea_Computacional/nombreIntersecciones.txt"
+//#define FILENAME "C:/Users/Lenovo/Desktop/a/U/C/Clases/Clases profe vicente/Discretas/Tarea_Computacional/nombreIntersecciones.txt"
+#define FILENAME "nombreIntersecciones.txt"
 
 void leerVerticesDesdeArchivo(const char *filename);
 char* nombreVertice(int vertice);
@@ -29,7 +30,7 @@ int main() {
     int matrizAdyacencia[NUM_VERTICES][NUM_VERTICES];
     generarMatriz(matrizAdyacencia);
 
-    dijkstra(matrizAdyacencia,1,28);
+    dijkstra(matrizAdyacencia,1,10);
     return 0;
 }
 
@@ -132,7 +133,8 @@ void generarMatriz(int matriz[112][112]){
     FILE *archivo;
     int numNodos = 112;
 
-    archivo = fopen("/Users/rica1/OneDrive/Escritorio/TareaDiscretas/Tarea_Computacional/MatrizAdyacencia.txt","r");
+    //archivo = fopen("C:/Users/Lenovo/Desktop/a/U/C/Clases/Clases profe vicente/Discretas/Tarea_Computacional/MatrizAdyacencia.txt","r");
+    archivo = fopen("MatrizAdyacencia.txt","r");
 
     if(archivo == NULL){
         perror("Error al abrir el archivo");
@@ -148,19 +150,18 @@ void generarMatriz(int matriz[112][112]){
 
     for(int i=0; i<numNodos; i++){
         for(int j=0; j<numNodos; j++){
-            printf("%d", matriz[i][j]);
+            //printf("%d", matriz[i][j]);
         }
-        printf("\n");
+        //printf("\n");
     }
 }
 void dijkstra(int matrizAdyacencia[112][112], int inicio, int final) {
-    
     int distancias[112], anteriores[112], visto[112], camino[112], actual = inicio;
 
     for (int i = 0; i < 112; i++) {
-        distancias[i] = 9999;           //Dejamos las distancias en un numero alto al inicio, ya que no tenemos un "infinito" 
-        anteriores[i] = -1;             //Dejamos el vector de anteriores en -1 para mostrar que se aun no empieza 
-        visto[i] = 0;               //Dejamos el vector en 0 ya que ningun vertice ha sido visitado
+        distancias[i] = 9999;  // Dejamos las distancias en un número alto al inicio, ya que no tenemos un "infinito"
+        anteriores[i] = -1;    // Dejamos el vector de anteriores en -1 para mostrar que aún no ha comenzado
+        visto[i] = 0;          // Dejamos el vector en 0 ya que ningún vértice ha sido visitado
     }
 
     visto[actual] = 1;
@@ -181,33 +182,31 @@ void dijkstra(int matrizAdyacencia[112][112], int inicio, int final) {
                 vertice = i;
             }
         }
-      actual = vertice;
+        actual = vertice;
         visto[actual] = 1;
     }
 
+    // Reconstruir el camino
     actual = final;
-
     int longitudCamino = 0;
-    while (actual != inicio) {
+    while (actual != -1) {
         camino[longitudCamino++] = actual;
         actual = anteriores[actual];
     }
-    camino[longitudCamino++] = actual;
 
-    for (int i = 0; i < longitudCamino / 2; i++) {
-        int aux = camino[i];
-        camino[i] = camino[longitudCamino - i - 1];
-        camino[longitudCamino - i - 1] = aux;
-    }
-
-    printf("Camino desde %d hasta %d: ", inicio, final);
-    for (int i = 0; i < longitudCamino; i++) {
-        if (i == longitudCamino - 1) {
-            printf("%d\n", camino[i]);
-        } else {
-            printf("%d ", camino[i]);
+    // Imprimir la ruta en formato de lista de intersecciones
+    printf("Ruta desde %s hasta %s:\n", nombreVertice(inicio), nombreVertice(final));
+    printf("Intersecciones: ");
+    for (int i = longitudCamino - 1; i >= 0; i--) {
+        printf("%s", nombreVertice(camino[i]));
+        if (i > 0) {
+            printf(" -> ");
         }
     }
-
-    printf("Distancia desde %d hasta %d: %d\n", inicio, final, distancias[final]);
+    printf("\nDistancias: ");
+    for (int i = longitudCamino - 1; i > 0; i--) {
+        printf("%d m, ", matrizAdyacencia[camino[i]][camino[i - 1]]);
+    }
+    printf("%d m\n", distancias[final]);
 }
+
