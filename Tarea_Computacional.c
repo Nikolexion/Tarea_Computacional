@@ -46,9 +46,7 @@ int main() {
                                                                              //Y la direccion de llegada y su numero
         int nroCalle1, nroCalle2,vertical1, vertical2, inicio, final;
         nroCalle1 = obtenerCalle(calle1,&vertical1);
-        printf("Calle1: %d vertical1: %d ", nroCalle1, vertical1);
         nroCalle2 = obtenerCalle(calle2,&vertical2);
-        printf("Calle2: %d vertical2: %d\n",nroCalle2, vertical2);
         if (vertical1 == 0)
         {
             inicio = matrizGrafo[nroCalle1][numeroACalle(numero1,vertical1)];
@@ -70,12 +68,34 @@ int main() {
             }
             
         }
-        printf("inicio: %d, final: %d ",inicio,final);
+        dijkstra(matrizAdyacencia,inicio,final);
         
 
         
     } else if (nroPalabras == 6){
         separar6Palabras(input,calle1,numero1,calle2,numero2,calle3,numero3);
+        int nroCalle1, nroCalle2,nroCalle3, vertical1, vertical2, vertical3, inicio, parada, final;
+        nroCalle1 = obtenerCalle(calle1,&vertical1);
+        nroCalle2 = obtenerCalle(calle2,&vertical2);
+        nroCalle3 = obtenerCalle(calle3,&vertical3);
+        if (vertical1 == 0){
+            inicio = matrizGrafo[nroCalle1][numeroACalle(numero1,vertical1)];
+        } else {
+             inicio = matrizGrafo[numeroACalle(numero1,vertical1)][nroCalle1];
+        }
+        if (vertical2 == 0){
+            final = matrizGrafo[nroCalle2][numeroACalle(numero2,vertical2)];
+        } else {
+            final = matrizGrafo[numeroACalle(numero2,vertical2)][nroCalle2];
+        }
+        if (vertical3 == 0){
+            parada = matrizGrafo[nroCalle3][numeroACalle(numero3,vertical3)];
+        } else {
+            parada = matrizGrafo[numeroACalle(numero3,vertical3)][nroCalle3];
+        }
+
+        dijkstra(matrizAdyacencia,inicio,parada);
+        dijkstra(matrizAdyacencia,parada,final);
 
     } else{
         printf("Numero de palabras no coincide con el formato");
