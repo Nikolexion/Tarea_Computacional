@@ -7,13 +7,15 @@
 
 #define NUM_VERTICES 112
 #define MAX_CALLE_LEN 50
-//#define FILENAME "C:/Users/Lenovo/Desktop/a/U/C/Clases/Clases profe vicente/Discretas/Tarea_Computacional/nombreIntersecciones.txt"
-#define FILENAME "nombreIntersecciones.txt"
+#define FILENAME "C:/Users/Lenovo/Desktop/a/U/C/Clases/Clases profe vicente/Discretas/Tarea_Computacional/nombreIntersecciones.txt"
+//#define FILENAME "nombreIntersecciones.txt"
 
 void leerVerticesDesdeArchivo(const char *filename);
 char* nombreVertice(int vertice);
 int obtenerCalle(const char* palabra, int *vertical);
-
+int matrizGrafo[8][14] = {{1,2,3,4,5,6,7,8,9,10,11,12,13,14},{15,16,17,18,19,20,21,22,23,24,25,26,27,28},{29,30,31,32,33,34,35,36,37,38,39,40,41,42},
+                          {42,43,44,45,46,47,48,49,50,51,52,53,54,55,56},{57,58,59,60,61,62,63,64,65,66,67,68,69,70},{71,72,73,74,75,76,77,78,79,80,81,82,83,84},
+                          {85,86,87,88,89,90,91,92,93,94,95,96,97,98},{99,100,101,102,103,104,105,106,107,108,109,110,111,112}};
 
 typedef struct {
     int vertice;
@@ -26,13 +28,80 @@ Nodo mapaCalles[NUM_VERTICES];
 
 
 int main() {
-    leerVerticesDesdeArchivo(FILENAME);
-    
+    char input[50];
+    fgets(input, sizeof(input), stdin);                    //Guarda el input en la string llamada input
+    size_t length = strlen(input);                      // Elimina el carácter de nueva línea ('\n') al final, si está presente
+    if (length > 0 && input[length - 1] == '\n') {
+        input[length - 1] = '\0';
+    }
+
+    leerVerticesDesdeArchivo(FILENAME); 
     int matrizAdyacencia[NUM_VERTICES][NUM_VERTICES];
     generarMatriz(matrizAdyacencia);
+    int nroPalabras = contarPalabras(&input);
+    char calle1[MAX_CALLE_LEN], numero1[MAX_CALLE_LEN], calle2[MAX_CALLE_LEN], numero2[MAX_CALLE_LEN], calle3[MAX_CALLE_LEN], numero3[MAX_CALLE_LEN];
+    if (nroPalabras = 4)
+    {
+        separarPalabras(input, calle1, numero1, calle2, numero2);      //Se separa el input en la direccion de partida, su numero
+                                                                             //Y la direccion de llegada y su numero
+        int nroCalle1, nroCalle2,vertical1, vertical2, inicio, final;
+        nroCalle1 = obtenerCalle(calle1,vertical1);
+        nroCalle2 = obtenerCalle(calle2,vertical2);
+        if (vertical1 = 0)
+        {
+            inicio = matrizGrafo[numeroACalle(numero1,vertical1)][nroCalle1];
+            if (vertical2 = 0)
+            {
+                final = matrizGrafo[numeroACalle(numero2,vertical2)][nroCalle2];
+            } else{
+                final = matrizGrafo[nroCalle2][numeroACalle(numero2,vertical2)];
+            }
+        } else{
+            inicio = matrizGrafo[nroCalle1][numeroACalle(numero1,vertical1)];
+            if (vertical2 = 1)
+            {
+                final = matrizGrafo[nroCalle2][numeroACalle(numero2,vertical2)];
+            } else{
+                final = matrizGrafo[numeroACalle(numero2,vertical2)][nroCalle2];
+            }
+            
+        }
+        printf("inicio: %d, final: %d",inicio,final);
+        
 
-    dijkstra(matrizAdyacencia,1,10);
+        
+        dijkstra(matrizAdyacencia,inicio, final);
+    } else if (nroPalabras = 6){
+        separar6Palabras(input,calle1,numero1,calle2,numero2,calle3,numero3);
+
+    } else{
+        printf("Numero de palabras no coincide con el formato");
+    }
+    
     return 0;
+}
+
+
+int contarPalabras(const char *cadena) {
+    int contador = 0;
+    int enPalabra = 0; // Bandera para indicar si estamos dentro de una palabra
+
+    // Iterar a través de la cadena
+    while (*cadena) {
+        // Si el caracter actual es un espacio en blanco o un carácter de nueva linea, marca el final de una palabra
+        if (*cadena == ' ' || *cadena == '\n' || *cadena == '\t') {
+            enPalabra = 0;
+        }
+        // Si el caracter actual no es un espacio en blanco y estamos fuera de una palabra, el contador aumenta 1
+        else if (!enPalabra) {
+            enPalabra = 1;
+            contador++;
+        }
+
+        cadena++; // Avanzar al siguiente carácter
+    }
+
+    return contador;
 }
 
 void separarPalabras(const char* inputString, char* calle1, char* numero1, char* calle2, char* numero2) {
@@ -52,6 +121,29 @@ void separarPalabras(const char* inputString, char* calle1, char* numero1, char*
     token = strtok(NULL, " ");
     strcpy(numero2, token);
 }
+
+void separar6Palabras(const char* inputString, char* calle1, char* numero1, char* calle2, char* numero2, char* calle3, char* numero3) {
+    char copiaInput[100]; // Asumiendo un tamaño máximo para la cadena de entrada
+
+    // Copiar la cadena de entrada para evitar modificar la original
+    strcpy(copiaInput, inputString);
+
+    char* token = strtok(copiaInput, " "); // Dividir la cadena en palabras usando el espacio como delimitador
+
+    // Copiar cada palabra en las variables correspondientes
+    strcpy(calle1, token);
+    token = strtok(NULL, " ");
+    strcpy(numero1, token);
+    token = strtok(NULL, " ");
+    strcpy(calle2, token);
+    token = strtok(NULL, " ");
+    strcpy(numero2, token);
+    token = strtok(NULL, " ");
+    strcpy(calle3, token);
+    token = strtok(NULL, " ");
+    strcpy(numero3, token);
+}
+
 
 int obtenerCalle(const char* palabra, int *vertical){
     if (obtenerCalleX(palabra) != -1){
@@ -83,7 +175,7 @@ int obtenerCalleX(const char* palabra) {
 }
 int numeroACalle(const char* nroCalle, int vertical){
     int calle = atoi(nroCalle);
-    if (vertical = 1)
+    if (vertical = 0)
     {
         if (calle < 100){
             return 0;
@@ -116,7 +208,7 @@ int numeroACalle(const char* nroCalle, int vertical){
     } else {
         return -1;
     }
-    } else if (vertical = 0) {
+    } else if (vertical = 1) {
         if (calle < 100){
             return 7;
     } else if (calle < 200){
@@ -193,8 +285,8 @@ void generarMatriz(int matriz[112][112]){
     FILE *archivo;
     int numNodos = 112;
 
-    //archivo = fopen("C:/Users/Lenovo/Desktop/a/U/C/Clases/Clases profe vicente/Discretas/Tarea_Computacional/MatrizAdyacencia.txt","r");
-    archivo = fopen("MatrizAdyacencia.txt","r");
+    archivo = fopen("C:/Users/Lenovo/Desktop/a/U/C/Clases/Clases profe vicente/Discretas/Tarea_Computacional/MatrizAdyacencia.txt","r");
+    //archivo = fopen("MatrizAdyacencia.txt","r");
 
     if(archivo == NULL){
         perror("Error al abrir el archivo");
