@@ -40,38 +40,41 @@ int main() {
     generarMatriz(matrizAdyacencia);
     int nroPalabras = contarPalabras(&input);
     char calle1[MAX_CALLE_LEN], numero1[MAX_CALLE_LEN], calle2[MAX_CALLE_LEN], numero2[MAX_CALLE_LEN], calle3[MAX_CALLE_LEN], numero3[MAX_CALLE_LEN];
-    if (nroPalabras = 4)
+    if (nroPalabras == 4)
     {
         separarPalabras(input, calle1, numero1, calle2, numero2);      //Se separa el input en la direccion de partida, su numero
                                                                              //Y la direccion de llegada y su numero
         int nroCalle1, nroCalle2,vertical1, vertical2, inicio, final;
-        nroCalle1 = obtenerCalle(calle1,vertical1);
-        nroCalle2 = obtenerCalle(calle2,vertical2);
-        if (vertical1 = 0)
+        nroCalle1 = obtenerCalle(calle1,&vertical1);
+        printf("Calle1: %d vertical1: %d ", nroCalle1, vertical1);
+        nroCalle2 = obtenerCalle(calle2,&vertical2);
+        printf("Calle2: %d vertical2: %d\n",nroCalle2, vertical2);
+        if (vertical1 == 0)
         {
-            inicio = matrizGrafo[numeroACalle(numero1,vertical1)][nroCalle1];
-            if (vertical2 = 0)
+            inicio = matrizGrafo[nroCalle1][numeroACalle(numero1,vertical1)];
+            if (vertical2 == 0)
             {
-                final = matrizGrafo[numeroACalle(numero2,vertical2)][nroCalle2];
-            } else{
                 final = matrizGrafo[nroCalle2][numeroACalle(numero2,vertical2)];
+            } else{
+                
+                final = matrizGrafo[numeroACalle(numero2,vertical2)][nroCalle2];
             }
         } else{
-            inicio = matrizGrafo[nroCalle1][numeroACalle(numero1,vertical1)];
-            if (vertical2 = 1)
+            inicio = matrizGrafo[numeroACalle(numero1,vertical1)][nroCalle1];
+            if (vertical2 == 1)
             {
-                final = matrizGrafo[nroCalle2][numeroACalle(numero2,vertical2)];
-            } else{
                 final = matrizGrafo[numeroACalle(numero2,vertical2)][nroCalle2];
+            } else{
+                
+                final = matrizGrafo[nroCalle2][numeroACalle(numero2,vertical2)];
             }
             
         }
-        printf("inicio: %d, final: %d",inicio,final);
+        printf("inicio: %d, final: %d ",inicio,final);
         
 
         
-        dijkstra(matrizAdyacencia,inicio, final);
-    } else if (nroPalabras = 6){
+    } else if (nroPalabras == 6){
         separar6Palabras(input,calle1,numero1,calle2,numero2,calle3,numero3);
 
     } else{
@@ -147,10 +150,10 @@ void separar6Palabras(const char* inputString, char* calle1, char* numero1, char
 
 int obtenerCalle(const char* palabra, int *vertical){
     if (obtenerCalleX(palabra) != -1){
-        vertical = 1;
+        *vertical = 0;
         return obtenerCalleX(palabra);
     } else{
-        vertical = 0;
+        *vertical = 1;
         return obtenerCalleY(palabra);
     }
 }
@@ -158,8 +161,7 @@ int obtenerCalle(const char* palabra, int *vertical){
 int obtenerCalleX(const char* palabra) {
     // Array de palabras
     const char* palabras[] = {
-        "Chacabuco", "Cochrane", "San_Martin", "OHiggins", "Barros_Arana", "Freire", "Maipu",
-    "Los_Carrera"
+    "Los_Carrera","Maipu","Freire","Barros_Arana","OHiggins","San_Martin","Cochrane","Chacabuco"
     };
 
     // Iterar sobre el array de palabras
@@ -173,72 +175,13 @@ int obtenerCalleX(const char* palabra) {
     // Si no se encuentra la palabra, devolver -1 o algún valor que indique que no se encontró
     return -1;
 }
-int numeroACalle(const char* nroCalle, int vertical){
-    int calle = atoi(nroCalle);
-    if (vertical = 0)
-    {
-        if (calle < 100){
-            return 0;
-    } else if (calle < 200){
-        return 1;
-    } else if (calle < 300){
-        return 2;
-    } else if (calle < 400){
-        return 3;
-    } else if (calle < 500){
-        return 4;
-    } else if (calle < 600){
-        return 5;
-    } else if (calle < 700){
-        return 6;
-    } else if (calle < 800){
-        return 7;
-    } else if (calle < 900){
-        return 8;
-    } else if (calle < 1000){
-        return 9;
-    } else if (calle < 1100){
-        return 10;
-    } else if (calle < 1200){
-        return 11;
-    } else if (calle < 1300){
-        return 12;
-    } else if (calle < 1400){
-        return 13;
-    } else {
-        return -1;
-    }
-    } else if (vertical = 1) {
-        if (calle < 100){
-            return 7;
-    } else if (calle < 200){
-        return 6;
-    } else if (calle < 300){
-        return 5;
-    } else if (calle < 400){
-        return 4;
-    } else if (calle < 500){
-        return 3;
-    } else if (calle < 600){
-        return 2;
-    } else if (calle < 700){
-        return 1;
-    } else if (calle < 800){
-        return 0;
-    } else {
-        return -1;
-    }
-    } else {
-        return -1;
-    }
-}
 
 int obtenerCalleY(const char* palabra) {
     // Array de palabras
     const char* palabras[] = {
-        "Arturo_Prat", "Serrano", "Salas", "Angol", "Lincoyán",
-        "Rengo", "Caupolicán", "Aníbal_Pinto", "Colo_Colo", "Castellón",
-        "Tucapel", "Orompello", "Ongolmo", "Paicaví", "Pedro_Aguirre_Cerda"
+        "Arturo_Prat", "Serrano", "Salas", "Angol", "Lincoyan",
+        "Rengo", "Caupolican", "Anibal_Pinto", "Colo_Colo", "Castellon",
+        "Tucapel", "Orompello", "Ongolmo", "Paicavi", "Pedro_Aguirre_Cerda"
     };
 
     // Iterar sobre el array de palabras
@@ -281,6 +224,67 @@ void leerVerticesDesdeArchivo(const char *filename) {
 
     fclose(file);
 }
+
+int numeroACalle(const char* nroCalle, int vertical){
+    int calle = atoi(nroCalle);
+    if (vertical == 0)
+    {
+        if (calle < 100){
+            return 0;
+    } else if (calle < 200){
+        return 1;
+    } else if (calle < 300){
+        return 2;
+    } else if (calle < 400){
+        return 3;
+    } else if (calle < 500){
+        return 4;
+    } else if (calle < 600){
+        return 5;
+    } else if (calle < 700){
+        return 6;
+    } else if (calle < 800){
+        return 7;
+    } else if (calle < 900){
+        return 8;
+    } else if (calle < 1000){
+        return 9;
+    } else if (calle < 1100){
+        return 10;
+    } else if (calle < 1200){
+        return 11;
+    } else if (calle < 1300){
+        return 12;
+    } else if (calle < 1400){
+        return 13;
+    } else {
+        return -1;
+    }
+    } else if (vertical == 1) {
+        if (calle < 100){
+            return 7;
+    } else if (calle < 200){
+        return 6;
+    } else if (calle < 300){
+        return 5;
+    } else if (calle < 400){
+        return 4;
+    } else if (calle < 500){
+        return 3;
+    } else if (calle < 600){
+        return 2;
+    } else if (calle < 700){
+        return 1;
+    } else if (calle < 800){
+        return 0;
+    } else {
+        return -1;
+    }
+    } else {
+        return -1;
+    }
+}
+
 void generarMatriz(int matriz[112][112]){
     FILE *archivo;
     int numNodos = 112;
