@@ -1,60 +1,103 @@
 #include <stdio.h>
+#include <stdbool.h>
+
+void dijkstra();
+void generarMatriz();
+
+#define NUM_VERTICES 112
+
+
+
+int main(){
+    int** matrizAdyacencia;
+    matrizAdyacencia = (int**)malloc(NUM_VERTICES * sizeof(int*));
+    for(int i=0;i<NUM_VERTICES;i++){
+        matrizAdyacencia[i]=(int*)malloc(NUM_VERTICES * sizeof(int));
+    }
+    generarMatriz(matrizAdyacencia);
+    dijkstra(matrizAdyacencia,1,1);
+}
+
 
 
 void dijkstra(int matrizAdyacencia[112][112], int inicio, int final) {
-    int distancias[112], anteriores[112], visto[112], camino[112], actual = inicio;
+    int matrizCaminos[112][2],revisados[112],infinito = 10000,verticeOrigen=inicio-1;
+    bool verticesRevisados = false;
 
-    for (int i = 0; i < 112; i++) {
-        distancias[i] = 9999;           //Dejamos las distancias en un numero alto al inicio, ya que no tenemos un "infinito" 
-        anteriores[i] = -1;             //Dejamos el vector de anteriores en -1 para mostrar que se aun no empieza 
-        visto[i] = 0;               //Dejamos el vector en 0 ya que ningun vertice ha sido visitado
+    //inicializar el array revisados con ceros
+    for(int i=0;i<112;i++){
+        revisados[i]=0;
     }
 
-    visto[actual] = 1;
-    distancias[actual] = 0;
-
-    while (!visto[final]) {
-        int distanciaMinima = 9999;
-        int vertice = 0;
-
-        for (int i = 0; i < 112; i++) {
-            int distancia = distancias[actual] + matrizAdyacencia[actual][i];
-            if (distancia < distancias[i] && !visto[i]) {
-                distancias[i] = distancia;
-                anteriores[i] = actual;
-            }
-            if (distanciaMinima > distancias[i] && !visto[i]) {
-                distanciaMinima = distancias[i];
-                vertice = i;
+    //Inicializar la matrizCaminos con distancias infinitas y origen nulo
+    for(int i=0;i<112;i++){
+        matrizCaminos[i][0]=infinito;
+        matrizCaminos[i][1]=-1;
+    }
+    matrizCaminos[inicio-1][0]=0;
+    matrizCaminos[inicio-1][1]=inicio;
+    
+    //Realizo busqueda de los caminos mientras no se hayan revisado todos los vertices
+    while(!verticesRevisados){
+        int candidatoOrigen;
+        int distanciaMinima=infinito;
+        revisados[verticeOrigen]=1;
+        verticesRevisados = true;
+        for(int i=0;i<112;i++){
+            //guardo la distancia desde el vertice origen al vertice i
+            int distancia = matrizAdyacencia[verticeOrigen][i];
+            //reviso si existe un camino de mi vertice origen al vertice i
+            if(distancia!=0){
+                //reviso si el camino desde el inicio hasta el vertice i, que pasa por mi vertice origen, tiene menor longitud que el camino anterior que llevaba al vertice i
+                if(matrizCaminos[i][0]>matrizCaminos[verticeOrigen][0]+distancia){
+                    matrizCaminos[i][0]=matrizCaminos[verticeOrigen][0]+distancia;
+                    matrizCaminos[i][1]=verticeOrigen+1;
+                    //obtengo el vertice con el camino mas corto que no se haya revisado
+                    if(matrizCaminos[i][0]<distanciaMinima && revisados[i]==0){
+                        distanciaMinima=matrizCaminos[i][0];
+                        candidatoOrigen=i;
+                    }
+                }
             }
         }
-      actual = vertice;
-        visto[actual] = 1;
+        //Revisa si se revisaron todos los vertices
+        for(int i=0;i<112;i++){
+            if(revisados[i]==0){
+                verticesRevisados=false;
+            }
+        }
+        //declaro mi vertice origen como el vertice i tal que su camino tiene la menor distancia, y no ha sido revisado
+        verticeOrigen=candidatoOrigen;
+
     }
 
-    actual = final;
 
-    int longitudCamino = 0;
-    while (actual != inicio) {
-        camino[longitudCamino++] = actual;
-        actual = anteriores[actual];
+
+
+    //mostrar matriz caminos
+    for(int i=0; i<112; i++){
+        printf("%d", matrizCaminos[i][0]);
+        printf("\n");
     }
-    camino[longitudCamino++] = actual;
+}
 
-    for (int i = 0; i < longitudCamino / 2; i++) {
-        int aux = camino[i];
-        camino[i] = camino[longitudCamino - i - 1];
-        camino[longitudCamino - i - 1] = aux;
+
+
+void generarMatriz(int** matriz){
+    FILE *archivo;
+    int numNodos = 112;
+
+    archivo = fopen("/Users/rica1/OneDrive/Escritorio/TareaDiscretas/Tarea_Computacional/MatrizAdyacencia.txt","r");
+
+    if(archivo == NULL){
+        perror("Error al abrir el archivo");
+        return;
     }
 
-    printf("Camino desde %d hasta %d: ", inicio, final);
-    for (int i = 0; i < longitudCamino; i++) {
-        if (i == longitudCamino - 1) {
-            printf("%d\n", camino[i]);
-        } else {
-            printf("%d ", camino[i]);
+    for(int i=0; i<numNodos; i++){
+        for(int j=0; j<numNodos; j++){
+            fscanf(archivo, "%d", &matriz[i][j]);
         }
     }
-
-    printf("Distancia desde %s hasta %s: %d\n", inicio, final, distancias[final]);
+    fclose(archivo);
 }
