@@ -30,6 +30,7 @@ Nodo mapaCalles[NUM_VERTICES];
 
 int main() {
    char input[50];
+    printf("Ingrese la calle y numero de inicio, de destino y opcionalmente una parada:\n");
     fgets(input, sizeof(input), stdin);                    //Guarda el input en la string llamada input
     size_t length = strlen(input);                      // Elimina el carácter de nueva línea ('\n') al final, si está presente
     if (length > 0 && input[length - 1] == '\n') {
