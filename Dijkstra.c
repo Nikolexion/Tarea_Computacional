@@ -12,7 +12,7 @@ void generarMatriz();
 int main(){
     int matrizAdyacencia[112][112];
     generarMatriz(matrizAdyacencia);
-    dijkstra(matrizAdyacencia,1,99);
+    dijkstra(matrizAdyacencia,1,58);
 }
 
 
@@ -133,7 +133,7 @@ void generarMatriz(int matriz[112][112]){
     FILE *archivo;
     int numNodos = 112;
 
-    archivo = fopen("/Users/rica1/OneDrive/Escritorio/TareaDiscretas/Tarea_Computacional/MatrizAdyacencia.txt","r");
+    archivo = fopen("C:/Users/Lenovo/Desktop/a/U/C/Clases/Clases profe vicente/Discretas/Tarea_Computacional/MatrizAdyacencia.txt","r");
 
     if(archivo == NULL){
         perror("Error al abrir el archivo");

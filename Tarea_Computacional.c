@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "lecturaArchivo.h"
 #include "Dijkstra.h"
@@ -168,51 +169,51 @@ void separar6Palabras(const char* inputString, char* calle1, char* numero1, char
 }
 
 
-int obtenerCalle(const char* palabra, int *vertical){
-    if (obtenerCalleX(palabra) != -1){
+int obtenerCalle(const char* calle, int *vertical){
+    if (obtenerCalleX(calle) != -1){
         *vertical = 0;
-        return obtenerCalleX(palabra);
+        return obtenerCalleX(calle);
     } else{
         *vertical = 1;
-        return obtenerCalleY(palabra);
+        return obtenerCalleY(calle);
     }
 }
 
-int obtenerCalleX(const char* palabra) {
+int obtenerCalleX(const char* calle) {
     // Array de palabras
-    const char* palabras[] = {
+    const char* calles[] = {
     "Los_Carrera","Maipu","Freire","Barros_Arana","OHiggins","San_Martin","Cochrane","Chacabuco"
     };
 
-    // Iterar sobre el array de palabras
-    for (int i = 0; i < sizeof(palabras) / sizeof(palabras[0]); ++i) {
-        // Comparar la entrada con cada palabra
-        if (strcmp(palabra, palabras[i]) == 0) {
+    // Iterar sobre el array de calles
+    for (int i = 0; i < sizeof(calles) / sizeof(calles[0]); ++i) {
+        // Comparar la entrada con cada calle
+        if (strcmp(calle, calles[i]) == 0) {
             return i;  // Devolver el índice si hay una coincidencia
         }
     }
 
-    // Si no se encuentra la palabra, devolver -1 o algún valor que indique que no se encontró
+    // Si no se encuentra la calle, devolver -1 
     return -1;
 }
 
-int obtenerCalleY(const char* palabra) {
+int obtenerCalleY(const char* calle) {
     // Array de palabras
-    const char* palabras[] = {
+    const char* calles[] = {
         "Arturo_Prat", "Serrano", "Salas", "Angol", "Lincoyan",
         "Rengo", "Caupolican", "Anibal_Pinto", "Colo_Colo", "Castellon",
         "Tucapel", "Orompello", "Ongolmo", "Paicavi", "Pedro_Aguirre_Cerda"
     };
 
-    // Iterar sobre el array de palabras
-    for (int i = 0; i < sizeof(palabras) / sizeof(palabras[0]); ++i) {
-        // Comparar la entrada con cada palabra
-        if (strcmp(palabra, palabras[i]) == 0) {
+    // Iterar sobre el array de calles
+    for (int i = 0; i < sizeof(calles) / sizeof(calles[0]); ++i) {
+        // Comparar la entrada con cada calle
+        if (strcmp(calle, calles[i]) == 0) {
             return i;  // Devolver el índice si hay una coincidencia
         }
     }
 
-    // Si no se encuentra la palabra, devolver -1 o algún valor que indique que no se encontró
+    // Si no se encuentra la calle, devolver -1 
     return -1;
 }
 // Función para convertir un vértice a una calle
@@ -331,58 +332,115 @@ void generarMatriz(int matriz[112][112]){
         //printf("\n");
     }
 }
-void dijkstra(int matrizAdyacencia[112][112], int inicio, int final) {
-    int distancias[112], anteriores[112], visto[112], camino[112], actual = inicio;
 
-    for (int i = 0; i < 112; i++) {
-        distancias[i] = 9999;  // Dejamos las distancias en un número alto al inicio, ya que no tenemos un "infinito"
-        anteriores[i] = -1;    // Dejamos el vector de anteriores en -1 para mostrar que aún no ha comenzado
-        visto[i] = 0;          // Dejamos el vector en 0 ya que ningún vértice ha sido visitado
+void dijkstra(int matrizAdyacencia[112][112],int inicio, int final) {
+    //declaracion de variables
+    int matrizCaminos[112][2],revisados[112],infinito = 10000,verticeOrigen=inicio-1, verticeOrigenFinal,verticesAnteriores[112],camino[112],
+    caminoAux[112];
+    bool verticesRevisados = false;
+
+    //inicializar el array revisados con ceros
+    for(int i=0;i<112;i++){
+        revisados[i]=0;
+    }
+    //inicializar la matriz de vertices anteriores con vertices nulos
+    for(int i=0;i<112;i++){
+        verticesAnteriores[i]=-1;
     }
 
-    visto[actual] = 1;
-    distancias[actual] = 0;
+    //Inicializar la matrizCaminos con distancias infinitas y origen nulo
+    for(int i=0;i<112;i++){
+        matrizCaminos[i][0]=infinito;
+        matrizCaminos[i][1]=-1;
+    }
+    matrizCaminos[verticeOrigen][0]=0;
+    matrizCaminos[verticeOrigen][1]=inicio;
+    
+    //Realizo busqueda de los caminos mientras no se hayan revisado todos los vertices
+    while(!verticesRevisados){
+        //agrego a la lista de revisados a mi vertice origen
+        revisados[verticeOrigen]=1;
 
-    while (!visto[final]) {
-        int distanciaMinima = 9999;
-        int vertice = 0;
-
-        for (int i = 0; i < 112; i++) {
-            int distancia = distancias[actual] + matrizAdyacencia[actual][i];
-            if (distancia < distancias[i] && !visto[i]) {
-                distancias[i] = distancia;
-                anteriores[i] = actual;
-            }
-            if (distanciaMinima > distancias[i] && !visto[i]) {
-                distanciaMinima = distancias[i];
-                vertice = i;
+        int distanciaMinima=infinito;
+        verticesRevisados = true;
+        bool verticesAdyacentesRevisados = true;
+        for(int i=0;i<112;i++){
+            //guardo la distancia desde el vertice origen al vertice i
+            int distancia = matrizAdyacencia[verticeOrigen][i];
+            //reviso si existe un camino de mi vertice origen al vertice i
+            if(distancia!=0){
+                //reviso si el camino desde el inicio hasta el vertice i, que pasa por mi vertice origen, tiene menor longitud que el camino anterior que llevaba al vertice i
+                if(matrizCaminos[i][0]>matrizCaminos[verticeOrigen][0]+distancia){
+                    matrizCaminos[i][0]=matrizCaminos[verticeOrigen][0]+distancia;
+                    matrizCaminos[i][1]=verticeOrigen+1;
+                    //corrige el camino mas corto para los vertices cercanos al vertice i
+                    for(int j=0;j<112;j++){
+                        if(matrizCaminos[j][1]==i+1){
+                            matrizCaminos[j][0]=matrizCaminos[i][0]+matrizAdyacencia[i][j];
+                        }
+                    }
+                }
+                //obtengo el vertice con el camino mas corto y que no esté revisado y lo coloco como prioridad maxima, si existe declaro que hay adyacentes no revisados
+                if(matrizCaminos[i][0]<distanciaMinima && revisados[i]!=1){
+                    distanciaMinima=matrizCaminos[i][0];
+                    verticeOrigenFinal=i;
+                    verticesAdyacentesRevisados=false;
+                }
             }
         }
-        actual = vertice;
-        visto[actual] = 1;
-    }
+        //si todos los vertices adyacentes estan revisados me devuelvo al vertice anterior
+        if(verticesAdyacentesRevisados){
+            int i=0;
+            while(verticesAnteriores[i]!=-1){
+            i++;
+            }
+            verticeOrigen=verticesAnteriores[i-1];
+            verticesAnteriores[i-1]=-1;
+        }
+        
+        //agregra el vertice origen a el arreglo de vertices anteriores si no se regreso a un vertice anterior y setea el siguiente vertice de origen
+        if(!verticesAdyacentesRevisados){
+            int i=0;
+            while(verticesAnteriores[i]!=-1){
+            i++;
+        }
+        verticesAnteriores[i]=verticeOrigen;
+        verticeOrigen=verticeOrigenFinal;
+        }
 
-    // Reconstruir el camino
-    actual = final;
-    int longitudCamino = 0;
-    while (actual != -1) {
-        camino[longitudCamino++] = actual;
-        actual = anteriores[actual];
+        //Revisa si se revisaron todos los vertices
+        for(int i=0;i<112;i++){
+            if(revisados[i]==0){
+                verticesRevisados=false;
+                break;
+            }
+        }
     }
+    //obtener el camino mas corto desde el vertice final hasta el vertice inicial
+    caminoAux[0]=final;
+    int aux = matrizCaminos[final-1][1];
+    int i=1;
+    while(aux!=inicio){
+        caminoAux[i]=aux;
+        aux=matrizCaminos[aux-1][1];
+        i++;
+    }
+    caminoAux[i]=inicio;
+    int largoCamino=i+1;
+    //obtener el camino mas corto desde el vertice inicial al vertice final
 
-    // Imprimir la ruta en formato de lista de intersecciones
-    printf("Ruta desde %s hasta %s:\n", nombreVertice(inicio), nombreVertice(final));
-    printf("Intersecciones: ");
-    for (int i = longitudCamino - 1; i >= 0; i--) {
+    for(;i>0;i--){
+        camino[largoCamino-1-i]=aux;
+        aux=caminoAux[i-1];
+    }
+    camino[largoCamino-1]=aux;
+
+    //mostrar camino mas largo desde el vertice inicio hasta el vertice final
+    for(int i=0; i<largoCamino; i++){
+        printf("%d", camino[i]);
         printf("%s", nombreVertice(camino[i]));
-        if (i > 0) {
+        if(i!=largoCamino-1){
             printf(" -> ");
         }
     }
-    printf("\nDistancias: ");
-    for (int i = longitudCamino - 1; i > 0; i--) {
-        printf("%d m, ", matrizAdyacencia[camino[i]][camino[i - 1]]);
-    }
-    printf("%d m\n", distancias[final]);
 }
-
