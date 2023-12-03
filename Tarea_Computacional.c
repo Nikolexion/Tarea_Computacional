@@ -41,14 +41,16 @@ int main() {
     generarMatriz(matrizAdyacencia);
     int nroPalabras = contarPalabras(&input);
     char calle1[MAX_CALLE_LEN], numero1[MAX_CALLE_LEN], calle2[MAX_CALLE_LEN], numero2[MAX_CALLE_LEN], calle3[MAX_CALLE_LEN], numero3[MAX_CALLE_LEN];
-    if (nroPalabras == 4)
+    
+    //Con un if se filtra si es un camino directo o un camino con una parada
+    if (nroPalabras == 4)                                               
     {
         separarPalabras(input, calle1, numero1, calle2, numero2);      //Se separa el input en la direccion de partida, su numero
                                                                              //Y la direccion de llegada y su numero
         int nroCalle1, nroCalle2,vertical1, vertical2, inicio, final;
         nroCalle1 = obtenerCalle(calle1,&vertical1);
         nroCalle2 = obtenerCalle(calle2,&vertical2);
-        if (vertical1 == 0)
+        if (vertical1 == 0)                                                         //Se verifica si calle1 y calle2 son horizontales o verticales
         {
             inicio = matrizGrafo[nroCalle1][numeroACalle(numero1,vertical1)];
             if (vertical2 == 0)
@@ -69,6 +71,7 @@ int main() {
             }
             
         }
+        //Se ejecuta la funcion creada Dijkstra
         dijkstra(matrizAdyacencia,inicio,final);
         
 
@@ -79,7 +82,7 @@ int main() {
         nroCalle1 = obtenerCalle(calle1,&vertical1);
         nroCalle2 = obtenerCalle(calle2,&vertical2);
         nroCalle3 = obtenerCalle(calle3,&vertical3);
-        if (vertical1 == 0){
+        if (vertical1 == 0){                                                            //Se verifica si calle1, calle2 y calle3 son horizontales o verticales
             inicio = matrizGrafo[nroCalle1][numeroACalle(numero1,vertical1)];
         } else {
              inicio = matrizGrafo[numeroACalle(numero1,vertical1)][nroCalle1];
@@ -94,19 +97,19 @@ int main() {
         } else {
             parada = matrizGrafo[numeroACalle(numero3,vertical3)][nroCalle3];
         }
-
+         //Se ejecuta la funcion creada Dijkstra primero hasta la parada y despues desde la parada hasta el final, separados por un salto de linea
         dijkstra(matrizAdyacencia,inicio,parada);
         printf("\n");
         dijkstra(matrizAdyacencia,parada,final);
 
     } else{
-        printf("Numero de palabras no coincide con el formato");
+        printf("ERROR: Numero de palabras no coincide con el formato");        //Se devuelve un error si la cantidad de plabras no es la adecuada
     }
     
     return 0;
 }
 
-
+//Funcion que cuenta la cantidad de palabras en una string para poder filtrar si son 4 palabras o 6 palabras
 int contarPalabras(const char *cadena) {
     int contador = 0;
     int enPalabra = 0; // Bandera para indicar si estamos dentro de una palabra
@@ -128,7 +131,7 @@ int contarPalabras(const char *cadena) {
 
     return contador;
 }
-
+// Separa una string en 4 strings distintas
 void separarPalabras(const char* inputString, char* calle1, char* numero1, char* calle2, char* numero2) {
     char copiaInput[100]; // Asumiendo un tamaño máximo para la cadena de entrada
 
@@ -146,7 +149,7 @@ void separarPalabras(const char* inputString, char* calle1, char* numero1, char*
     token = strtok(NULL, " ");
     strcpy(numero2, token);
 }
-
+// Separa una string en 6 strings distintas
 void separar6Palabras(const char* inputString, char* calle1, char* numero1, char* calle2, char* numero2, char* calle3, char* numero3) {
     char copiaInput[100]; // Asumiendo un tamaño máximo para la cadena de entrada
 
@@ -169,7 +172,7 @@ void separar6Palabras(const char* inputString, char* calle1, char* numero1, char
     strcpy(numero3, token);
 }
 
-
+// Funcion que revisa si la calle es horizontal o vertical, modifical el valor de la variable vertical y devuelve el numero de la calle
 int obtenerCalle(const char* calle, int *vertical){
     if (obtenerCalleX(calle) != -1){
         *vertical = 0;
@@ -179,7 +182,7 @@ int obtenerCalle(const char* calle, int *vertical){
         return obtenerCalleY(calle);
     }
 }
-
+// Funcion que devuelve el numero de la calle si es horizontal
 int obtenerCalleX(const char* calle) {
     // Array de palabras
     const char* calles[] = {
@@ -197,7 +200,7 @@ int obtenerCalleX(const char* calle) {
     // Si no se encuentra la calle, devolver -1 
     return -1;
 }
-
+// Funcion que devuelve el numero de la calle si es vertical
 int obtenerCalleY(const char* calle) {
     // Array de palabras
     const char* calles[] = {
@@ -217,7 +220,7 @@ int obtenerCalleY(const char* calle) {
     // Si no se encuentra la calle, devolver -1 
     return -1;
 }
-// Función para convertir un vértice a una calle
+// Función para convertir un vértice a una string con el nombre de la interseccion de calles
 char* nombreVertice(int vertice) {
     leerVerticesDesdeArchivo(FILENAME);
     // Busca el vértice en el mapa
@@ -231,7 +234,7 @@ char* nombreVertice(int vertice) {
     return "";
 }
 
-// Función para leer los vértices desde un archivo
+// Función para leer los vértices desde un archivo y guardarlos en un array de nodos
 void leerVerticesDesdeArchivo(const char *filename) {
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
@@ -246,7 +249,7 @@ void leerVerticesDesdeArchivo(const char *filename) {
 
     fclose(file);
 }
-
+// Funcion que transforma la direccion de la calle a un numero utilizado para encontrar la fila o columna mas cercana a la direccion
 int numeroACalle(const char* nroCalle, int vertical){
     int calle = atoi(nroCalle);
     if (vertical == 0)
@@ -306,7 +309,7 @@ int numeroACalle(const char* nroCalle, int vertical){
         return -1;
     }
 }
-
+// Funcion que lee desde un archivo .txt la matriz de adyacencia del nodo
 void generarMatriz(int matriz[112][112]){
     FILE *archivo;
     int numNodos = 112;
@@ -326,14 +329,8 @@ void generarMatriz(int matriz[112][112]){
     }
     fclose(archivo);
 
-    for(int i=0; i<numNodos; i++){
-        for(int j=0; j<numNodos; j++){
-            //printf("%d", matriz[i][j]);
-        }
-        //printf("\n");
-    }
 }
-
+// Una funcion que ejecuta el algoritmo de dijkstra y que imprime el camino mas corto desde un nodo a otro
 void dijkstra(int matrizAdyacencia[112][112],int inicio, int final) {
     //declaracion de variables
     int matrizCaminos[112][2],revisados[112],infinito = 10000,verticeOrigen=inicio-1, verticeOrigenFinal,verticesAnteriores[112],camino[112],
