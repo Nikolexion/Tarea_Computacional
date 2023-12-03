@@ -96,6 +96,7 @@ int main() {
         }
 
         dijkstra(matrizAdyacencia,inicio,parada);
+        printf("\n");
         dijkstra(matrizAdyacencia,parada,final);
 
     } else{
@@ -437,10 +438,11 @@ void dijkstra(int matrizAdyacencia[112][112],int inicio, int final) {
 
     //mostrar camino mas largo desde el vertice inicio hasta el vertice final
     for(int i=0; i<largoCamino; i++){
-        printf("%d", camino[i]);
         printf("%s", nombreVertice(camino[i]));
         if(i!=largoCamino-1){
             printf(" -> ");
         }
     }
+    //imprimir la distancia en metros
+    printf("\nDistancia en metros: %d metros",matrizCaminos[final-1][0]*100);
 }
