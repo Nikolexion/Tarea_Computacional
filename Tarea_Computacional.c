@@ -14,9 +14,9 @@
 void leerVerticesDesdeArchivo(const char *filename);
 char* nombreVertice(int vertice);
 int obtenerCalle(const char* palabra, int *vertical);
-int matrizGrafo[8][14] = {{1,2,3,4,5,6,7,8,9,10,11,12,13,14},{15,16,17,18,19,20,21,22,23,24,25,26,27,28},{29,30,31,32,33,34,35,36,37,38,39,40,41,42},
-                          {42,43,44,45,46,47,48,49,50,51,52,53,54,55,56},{57,58,59,60,61,62,63,64,65,66,67,68,69,70},{71,72,73,74,75,76,77,78,79,80,81,82,83,84},
-                          {85,86,87,88,89,90,91,92,93,94,95,96,97,98},{99,100,101,102,103,104,105,106,107,108,109,110,111,112}};
+int matrizGrafo[8][14] = {{1,2,3,4,5,6,7,8,9,10,11,12,13,14},{28,27,26,25,24,23,22,21,20,19,18,17,16,15},{29,30,31,32,33,34,35,36,37,38,39,40,41,42},
+                          {56,55,54,53,52,51,50,49,48,47,46,45,44,43},{57,58,59,60,61,62,63,64,65,66,67,68,69,70},{84,83,82,81,80,79,78,77,76,75,74,73,72,71},
+                          {85,86,87,88,89,90,91,92,93,94,95,96,97,98},{112,111,110,109,108,107,106,105,104,103,102,101,100,99}};
 
 typedef struct {
     int vertice;
@@ -29,7 +29,7 @@ Nodo mapaCalles[NUM_VERTICES];
 
 
 int main() {
-    char input[50];
+   char input[50];
     fgets(input, sizeof(input), stdin);                    //Guarda el input en la string llamada input
     size_t length = strlen(input);                      // Elimina el carácter de nueva línea ('\n') al final, si está presente
     if (length > 0 && input[length - 1] == '\n') {
